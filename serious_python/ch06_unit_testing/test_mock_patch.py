@@ -1,0 +1,43 @@
+from unittest import mock
+import pytest
+import requests
+
+class WhereIsPythonError(Exception):
+    pass
+
+def is_python_still_around():
+    try:
+        r = requests.get("http://python.org")
+    except IOError:
+        pass
+    else:
+        if r.status_code == 200:
+            return 'Python is a programming language' in r.content
+    raise WhereIsPythonError("Something bad happened")
+
+def get_fake_get(status_code, content):
+    m = mock.Mock()
+    m.status_code = status_code
+    m.content = content
+
+    def fake_get(url):
+        return m
+    
+    return fake_get
+
+def raise_get(url):
+    raise IOError(f"Unable to fetch url {url}");
+
+@mock.patch('requests.get', get_fake_get(200, 'Python is a programming language'))
+def test_python_is():
+    assert is_python_still_around() is True
+
+@mock.patch('requests.get', get_fake_get(404, 'Whatever'))
+def test_bad_status_code():
+    with pytest.raises(WhereIsPythonError):
+        is_python_still_around()
+
+@mock.patch('requests.get', raise_get)
+def test_ioerror():
+    with pytest.raises(WhereIsPythonError):
+        is_python_still_around()

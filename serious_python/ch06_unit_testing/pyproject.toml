@@ -1,0 +1,4 @@
+[tool.pytest.ini_options]
+markers = [
+    "dicttest: mark a test as a dictionary test.",
+]

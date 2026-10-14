@@ -1,0 +1,24 @@
+curl -X PUT "http://localhost:9200/movies" -H "Content-Type: application/json" -d' {
+  "mappings": {
+    "properties": {
+      "title": {
+        "type": "text"
+      },
+      "genre": {
+        "type": "keyword"
+      },
+      "release_year": {
+        "type": "integer"
+      },
+      "title_embedding": {
+        "type": "dense_vector",
+        "dims": 1536
+      }
+    }
+  }
+}'
+
+curl "http://localhost:9200/_cat/indices?v"
+
+
+curl -X PUT "http://localhost:9200/movies" -H "Content-Type: application/json" -d' {"mappings": {"properties": {"title": {"type": "text"}, "genre": {"type": "keyword"}, "release_year": {"type": "integer"}, "title_embedding": {"type": "dense_vector", "dims": 1536}}}}'
